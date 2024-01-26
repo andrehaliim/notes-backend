@@ -14,14 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['namespace' => 'App\Http\Controllers'], function ()
-{
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::controller(AuthController::class)->group(function () {
         Route::group(['prefix' => 'auth'], function () {
             Route::post('/login', 'login')->name('auth.login')->middleware(['throttle:15,3']);
-            Route::post('/me', 'me')->name('auth.me')->middleware(['auth:sanctum']);
             Route::post('/logout', 'logout')->name('auth.logout')->middleware(['auth:sanctum']);
+            Route::get('/me', 'me')->name('auth.me')->middleware(['auth:sanctum']);
         });
     });
-
 });
+

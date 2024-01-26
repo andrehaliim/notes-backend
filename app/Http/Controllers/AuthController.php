@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use DB;
 use Hash;
 use Config;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RecruiterLoginRequest;
 use App\Http\Traits\ApiResponse;
+use Laravel\Sanctum\Sanctum;
 
 class AuthController extends Controller
 {
@@ -29,11 +25,13 @@ class AuthController extends Controller
         $is_valid_password = $user ? Hash::check($params['password'], $user->password) : false;
         if ($user && $is_valid_password) {
             Auth::login($user);
+            $token = auth()->user()->createToken('API Token')->plainTextToken;
+    
             return $this->success([
-              'token' => auth()->user()->createToken('API Token')->plainTextToken
-            ]);
+                'token' => $token,
+            ])->header('Authorization', 'Bearer ' . $token);
         } else {
-            throw new HttpException(400, 'Invalid email or password !');
+            return $this->error('Invalid username or password!', 401);
         }
 
         return $this->success($params);
@@ -41,21 +39,19 @@ class AuthController extends Controller
 
     public function me()
     {
-        $result = (object)['id' => '', 'nik'  => '', 'name'  => ''];
         $user = User::find(Auth::id());
-        $result->id = $user->uid;
-        $result->name = $user->name;
-        $result->nik = $user->nik;
 
-        return $this->success($result);
+        return $this->success($user);
     }
 
     public function logout()
     {
-        auth()->user()->tokens()->delete();
-
-        return [
-            'message' => 'Tokens Revoked'
-        ];
+        if (Auth::check() || Sanctum::check()) {
+            $user = auth()->user();
+            $user->currentAccessToken()->delete();
+            return ['message' => 'Successfully logged out'];
+        }
+    
+        return response()->json(['error' => 'Unauthenticated'], 401);
     }
 }
