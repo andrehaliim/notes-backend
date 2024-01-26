@@ -29,5 +29,21 @@ return [
           'role' => 'required|string',
           'is_active' => 'boolean',
       ]
+      ],
+
+    'notes_create' => [
+      'validation_rules' => [
+        'user_id' => 'required|numeric|exists:users,id',
+        'title' => 'required|string',
+        'text' => 'required|string'
+      ]
+    ],
+
+    'notes_update' => [
+      'validation_rules' => [
+        'title' => 'required|string',
+        'text' => 'required|string'
+      ]
     ]
+    
 ];

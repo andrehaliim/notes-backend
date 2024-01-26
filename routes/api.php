@@ -22,5 +22,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('/me', 'me')->name('auth.me')->middleware(['auth:sanctum']);
         });
     });
+
+    Route::controller(NotesController::class)->group(function () {
+        Route::group(['prefix' => 'notes'], function () {
+            Route::get('/', 'show')->name('notes.show')->middleware(['auth:sanctum']);
+            Route::post('/', 'store')->name('notes.store')->middleware(['auth:sanctum']);
+            Route::put('/{id}', 'update')->name('notes.update')->middleware(['auth:sanctum']);
+            Route::delete('/{id}', 'delete')->name('notes.delete')->middleware(['auth:sanctum']);
+        });
+    });
 });
 
