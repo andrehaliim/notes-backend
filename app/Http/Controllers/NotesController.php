@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
 use Config;
 use App\Area;
 use App\Http\Controllers\Controller;
 use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\AllowedSort;
-use Illuminate\Http\Request;
-use App\Api\V1\Requests\AreaRequest;
-use App\Api\V1\Requests\AreaUpdateRequest;
-use App\Exports\AreaExport;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\NotesRequest;
 use App\Models\Notes;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -35,8 +30,10 @@ class NotesController extends Controller
 
     public function show()
     {
+        $user = User::find(Auth::id());
+        
         DB::statement(DB::raw('set @rownum=0'));
-        $query = Notes::selectRaw('notes.*');
+        $query = Notes::selectRaw('notes.*')->where('notes.user_id', $user->id);
 
         $qb = QueryBuilder::for($query)->allowedSorts(
             [
