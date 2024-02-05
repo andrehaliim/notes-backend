@@ -11,12 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 use App\Models\Vendor;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $guard_name = 'web';
     protected $fillable = [
@@ -25,13 +24,13 @@ class User extends Authenticatable
         'email',
         'password',
         'is_active',
+        'role',
     ];
     protected $appends = [];
     protected $guarded = [];
     protected $dates = [
     ];
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'is_active' => 'integer',
     ];
     protected $hidden = [
@@ -48,7 +47,6 @@ class User extends Authenticatable
         parent::boot();
 
         self::creating(function ($data) {
-            $data->uid = Uuid::uuid4();
         });
 
         self::updating(function ($data) {

@@ -13,7 +13,7 @@ return [
 
     'user_create' => [
       'validation_rules' => [
-          'nik' => 'nullable|string|unique:users,nik',
+          'username' => 'required|string|unique:users,username',
           'name' => 'required|string',
           'email' => 'required|email',
           'role' => 'required|string',
@@ -23,10 +23,9 @@ return [
 
     'user_update' => [
       'validation_rules' => [
-          'nik' => 'nullable|string',
           'name' => 'nullable|string',
-          'email' => 'required|email',
-          'role' => 'required|string',
+          'email' => 'nullable|email',
+          'role' => 'nullable|string',
           'is_active' => 'boolean',
       ]
       ],

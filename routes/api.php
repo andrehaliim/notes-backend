@@ -31,5 +31,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::delete('/{id}', 'delete')->name('notes.delete')->middleware(['auth:sanctum']);
         });
     });
+    Route::controller(UserController::class)->group(function () {
+        Route::group(['prefix' => 'user'], function () {
+            Route::get('/', 'show')->name('user.show');
+            Route::post('/', 'store')->name('user.store');
+            Route::put('/{id}', 'update')->name('user.update');
+            Route::delete('/{id}', 'delete')->name('user.delete');
+        });
+    });
 });
 
